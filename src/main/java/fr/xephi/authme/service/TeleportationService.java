@@ -11,6 +11,7 @@ import fr.xephi.authme.events.FirstSpawnTeleportEvent;
 import fr.xephi.authme.events.SpawnTeleportEvent;
 import fr.xephi.authme.initialization.Reloadable;
 import fr.xephi.authme.output.ConsoleLoggerFactory;
+import fr.xephi.authme.process.login.AsynchronousLogin;
 import fr.xephi.authme.settings.Settings;
 import fr.xephi.authme.settings.SpawnLoader;
 import fr.xephi.authme.settings.properties.RestrictionSettings;
@@ -21,6 +22,7 @@ import org.bukkit.entity.Player;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import static fr.xephi.authme.settings.properties.RestrictionSettings.TELEPORT_UNAUTHED_TO_SPAWN;
@@ -79,9 +81,11 @@ public class TeleportationService implements Reloadable {
      *
      * @return the custom spawn location, null if the player should spawn at the original location
      */
+    //TODO CONFIG IT
     public Location prepareOnJoinSpawnLocation(final Player player) {
         if (!settings.getProperty(RestrictionSettings.NO_TELEPORT)
-            && settings.getProperty(TELEPORT_UNAUTHED_TO_SPAWN)) {
+            && settings.getProperty(TELEPORT_UNAUTHED_TO_SPAWN)
+            && dataSource.getAuth(player.getName().toLowerCase(Locale.ROOT)) != null){
             final Location location = spawnLoader.getSpawnLocation(player);
 
             SpawnTeleportEvent event = new SpawnTeleportEvent(player, location,
